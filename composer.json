@@ -1,0 +1,22 @@
+{
+  "name": "hmazter/bitbucket-json-to-github-issues",
+  "description": "Import issues from BitBucket json to GitHub",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Kristoffer Högberg",
+      "email": "krihog@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "src"
+    }
+  },
+  "require": {
+    "symfony/console": "^3.0",
+    "symfony/var-dumper": "^3.0",
+    "guzzlehttp/guzzle": "^6.1"
+  }
+}
