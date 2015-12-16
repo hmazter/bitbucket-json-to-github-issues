@@ -144,7 +144,7 @@ class ImportCommand extends Command
 
         $this->auth = new Auth($username);
 
-        if ($helper->ask($input, $output, new Question('Do you use 2 factor auth for GitHub? (y/N)'))) {
+        if ($helper->ask($input, $output, new Question('Do you use 2 factor auth for GitHub? (y/N) '))) {
             $question = new Question('GitHub personal token (https://github.com/settings/tokens) with repo access: ');
             $token = $helper->ask($input, $output, $question);
             $this->auth->setToken($token);

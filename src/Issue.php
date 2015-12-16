@@ -50,6 +50,16 @@ class Issue
     private $comments = [];
 
     /**
+     * @var array BitBucket issue statuses matching to GitHub closed
+     */
+    private $closedStates = ['wontfix', 'invalid', 'duplicate', 'invalid'];
+
+    /**
+     * @var array BitBucket issue statuses matching to GitHub open
+     */
+    private $openStates = ['new', 'open', 'on hold'];
+
+    /**
      * Issue constructor.
      * @param string $title
      * @param string $body
@@ -195,15 +205,18 @@ class Issue
 
     public function parseAndSetState($state)
     {
-        $closedStates = ['resolved', 'wontfix', 'invalid', 'duplicate', 'invalid'];
-        $openStates = ['new', 'open', 'on hold'];
-
-        if (in_array($state, $closedStates)) {
+        if ($state == 'resolved') {
             $this->setState('closed');
             return;
         }
 
-        if (in_array($state, $openStates)) {
+        if (in_array($state, $this->closedStates)) {
+            $this->setState('closed');
+            $this->addLabel($state);
+            return;
+        }
+
+        if (in_array($state, $this->openStates)) {
             $this->setState('open');
             return;
         }
