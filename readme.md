@@ -26,3 +26,5 @@ to export issue json from BitBucket.
 1. run this script:
   `./app import -f [filename.json] -o [owner of repo (an org or a user)] -r [repo name] -u [username]`
 1. Follow output on screen
+
+Notice! An issue import into GitHub can not be reverted!

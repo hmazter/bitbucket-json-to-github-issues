@@ -88,9 +88,17 @@ class ImportCommand extends Command
         }
 
         $output->writeln('');
-        $output->writeln('<info>Parsed ' . count($issues) . ' from the json file</info>');
-        $question = new ConfirmationQuestion("Continue to import these to {$this->owner}/{$this->repo}? (y/N)", false);
-        if (!$helper->ask($input, $output, $question)) {
+        $output->writeln('<info>Parsed ' . count($issues) . ' issues from the json file</info>');
+
+        $importQuestion = new ConfirmationQuestion(
+            "Continue to import these to {$this->owner}/{$this->repo}? (y/N)",
+            false
+        );
+        $importConfirmQuestion = new ConfirmationQuestion(
+            "Are you sure you want to import these to {$this->owner}/{$this->repo}? This can not be reverted. (y/N)",
+            false
+        );
+        if (!$helper->ask($input, $output, $importQuestion) || !$helper->ask($input, $output, $importConfirmQuestion)) {
             $output->writeln('Aborting');
             return;
         }
