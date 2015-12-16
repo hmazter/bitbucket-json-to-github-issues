@@ -43,6 +43,7 @@ class IssueParser
             $issue->addComment($comment);
         }
 
+        ksort($issues);
         return $issues;
     }
 
