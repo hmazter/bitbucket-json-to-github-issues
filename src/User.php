@@ -47,4 +47,18 @@ class User
     {
         return $this->github;
     }
+
+    /**
+     * Get a GitHub mention (@username), defaults to BitBucket username if no GitHub user is set
+     *
+     * @return string
+     */
+    public function getGitHubMention()
+    {
+        if (!empty($this->getGithub())) {
+            return '@' . $this->getGithub();
+        }
+
+        return $this->getBitbucket();
+    }
 }

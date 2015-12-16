@@ -20,6 +20,16 @@ class Issue
     private $assignee;
 
     /**
+     * @var \DateTime
+     */
+    private $createdOn;
+
+    /**
+     * @var User
+     */
+    private $reporter;
+
+    /**
      * @var  int
      */
     private $milestone;
@@ -73,7 +83,9 @@ class Issue
      */
     public function getBody()
     {
-        return $this->body;
+        return "Created by {$this->reporter->getGitHubMention()} at {$this->createdOn->format('Y-m-d H:i:s')}\n\n"
+            . "---\n"
+            . $this->body;
     }
 
     public function getBodyWithComments()
@@ -82,7 +94,7 @@ class Issue
 
         /** @var Comment $comment */
         foreach ($this->comments as $comment) {
-            $return .= "\n---\n";
+            $return .= "\n\n---\n";
             $return .= $comment->getFormatted();
         }
 
@@ -111,6 +123,42 @@ class Issue
     public function setAssignee($assignee)
     {
         $this->assignee = $assignee;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedOn()
+    {
+        return $this->createdOn;
+    }
+
+    /**
+     * @param \DateTime|string $createdOn
+     */
+    public function setCreatedOn($createdOn)
+    {
+        if ($createdOn instanceof \DateTime) {
+            $this->createdOn = $createdOn;
+        } else {
+            $this->createdOn = new \DateTime($createdOn);
+        }
+    }
+
+    /**
+     * @return User
+     */
+    public function getReporter()
+    {
+        return $this->reporter;
+    }
+
+    /**
+     * @param User $reporter
+     */
+    public function setReporter($reporter)
+    {
+        $this->reporter = $reporter;
     }
 
     /**

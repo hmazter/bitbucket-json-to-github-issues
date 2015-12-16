@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Auth;
+use App\Comment;
 use App\Issue;
 
 class ImportService
@@ -21,26 +22,16 @@ class ImportService
     }
 
     /**
-     * Create a GitHub issue and update with correct state for each issue in the array
-     *
-     * @param array $issues
-     */
-    public function createAndUpdateIssues($issues)
-    {
-        /** @var Issue $issue */
-        foreach ($issues as $issue) {
-            $this->createAndUpdateIssue($issue);
-        }
-    }
-
-    /**
-     * Create a GitHub issue and update with correct state
+     * Create a GitHub issue and update with correct state and attach comments
      *
      * @param Issue $issue
      */
     public function createAndUpdateIssue(Issue $issue)
     {
         $issueId = $this->createIssue($issue);
+        foreach ($issue->getComments() as $comment) {
+            $this->createComment($issueId, $comment);
+        }
         $this->updateIssue($issueId, $issue);
     }
 
@@ -53,5 +44,10 @@ class ImportService
     private function updateIssue($issueId, Issue $issue)
     {
         $this->githubService->updateIssue($issueId, $issue);
+    }
+
+    private function createComment($issueId, Comment $comment)
+    {
+        $this->githubService->createComment($issueId, $comment);
     }
 }

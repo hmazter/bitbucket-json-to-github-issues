@@ -4,8 +4,9 @@ Import issues from BitBucket json to GitHub
 
 ## Features
 
-* Match BitBucket usernames to GitHib usernames for assignees
-* Merges comments from BitBucket issues to body of GitHub issues
+* Match BitBucket usernames to GitHib usernames for assignees and reporters
+* Posts BitBucket comments as comments on GitHub issues with all previous comment data in body
+* Use GitHub mentions to link issue and comment actions to GitHub users
 
 Missing
 

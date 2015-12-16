@@ -58,11 +58,11 @@ class ImportCommand extends Command
         $importService = new ImportService($this->owner, $this->repo, $this->auth);
         $issues = $issueParser->parseJsonFileToIssues($this->filename);
 
-        $output->writeln('<info>Found ' . count($issueParser->getAssignees()) . ' assignees in BitBucket</info>');
-        $output->writeln('<info>Match these BitBucket usernames to GitHub, or leave empty to skip assign</info>');
+        $output->writeln('<info>Found ' . count($issueParser->getUsers()) . ' users in BitBucket</info>');
+        $output->writeln('<info>Match these BitBucket usernames to GitHub users, or leave empty to skip</info>');
 
         /** @var User $assignee */
-        foreach ($issueParser->getAssignees() as $assignee) {
+        foreach ($issueParser->getUsers() as $assignee) {
             $username = $helper->ask(
                 $input,
                 $output,
@@ -145,11 +145,11 @@ class ImportCommand extends Command
         $this->auth = new Auth($username);
 
         if ($helper->ask($input, $output, new Question('Do you use 2 factor auth for GitHub? (y/N)'))) {
-            $question = new Question('GitHub personal token (https://github.com/settings/tokens) with repo access:');
+            $question = new Question('GitHub personal token (https://github.com/settings/tokens) with repo access: ');
             $token = $helper->ask($input, $output, $question);
             $this->auth->setToken($token);
         } else {
-            $password = $helper->ask($input, $output, new Question('GitHub password:'));
+            $password = $helper->ask($input, $output, new Question('GitHub password: '));
             $this->auth->setPassword($password);
         }
     }

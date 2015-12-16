@@ -8,7 +8,7 @@ use App\User;
 
 class IssueParser
 {
-    private $assignees = [];
+    private $users = [];
 
     public function parseJsonFileToIssues($filename)
     {
@@ -19,8 +19,10 @@ class IssueParser
          */
         $issues = [];
         foreach ($data['issues'] as $issueData) {
-            $issue = new Issue($issueData['title'], $issueData['content'], $this->getAssignee($issueData['assignee']));
+            $issue = new Issue($issueData['title'], $issueData['content'], $this->getUser($issueData['assignee']));
             $issue->parseAndSetState($issueData['status']);
+            $issue->setCreatedOn($issueData['created_on']);
+            $issue->setReporter($this->getUser($issueData['reporter']));
 
             if (isset($issueData['priority'])) {
                 $issue->addLabel($issueData['priority']);
@@ -36,33 +38,35 @@ class IssueParser
          * Parse comments
          */
         foreach ($data['comments'] as $commentData) {
-            $issueId = $commentData['issue'];
-            $comment = new Comment($commentData['content'], $commentData['user'], $commentData['created_on']);
-            /** @var Issue $issue */
-            $issue = $issues[$issueId];
-            $issue->addComment($comment);
+            if (!empty($commentData['content'])) {
+                $issueId = $commentData['issue'];
+                $comment = new Comment($commentData['content'], $this->getUser($commentData['user']), $commentData['created_on']);
+                /** @var Issue $issue */
+                $issue = $issues[$issueId];
+                $issue->addComment($comment);
+            }
         }
 
         ksort($issues);
         return $issues;
     }
 
-    public function getAssignees()
+    public function getUsers()
     {
-        return $this->assignees;
+        return $this->users;
     }
 
     /**
      * @param string $name
      * @return User
      */
-    private function getAssignee($name)
+    private function getUser($name)
     {
-        if (!isset($this->assignees[$name])) {
+        if (!isset($this->users[$name])) {
             $assignee = new User($name);
-            $this->assignees[$name] = $assignee;
+            $this->users[$name] = $assignee;
         }
 
-        return $this->assignees[$name];
+        return $this->users[$name];
     }
 }

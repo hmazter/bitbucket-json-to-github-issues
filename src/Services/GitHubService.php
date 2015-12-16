@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Auth;
+use App\Comment;
 use App\Issue;
 use GuzzleHttp\Client;
 
@@ -54,7 +55,7 @@ class GitHubService
     {
         $data = [
             'title' => $issue->getTitle(),
-            'body' => $issue->getBodyWithComments(),
+            'body' => $issue->getBody(),
             'assignee' => $issue->getAssignee()->getGithub(),
             'milestone' => $issue->getMilestone(),
             'labels' => $issue->getLabels(),
@@ -73,6 +74,19 @@ class GitHubService
             'state' => $issue->getState(),
         ];
         $this->post('issues/' . $issueId, $data);
+    }
+
+    /**
+     * @param int $issueId
+     * @param Comment $comment
+     */
+    public function createComment($issueId, Comment $comment)
+    {
+        $data = [
+            'body' => $comment->getFormatted(),
+        ];
+
+        $this->post("issues/$issueId/comments", $data);
     }
 
     private function getUrl($endpoint)

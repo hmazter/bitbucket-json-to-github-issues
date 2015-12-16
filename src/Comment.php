@@ -10,7 +10,7 @@ class Comment
     private $content;
 
     /**
-     * @var string
+     * @var User
      */
     private $user;
 
@@ -22,7 +22,7 @@ class Comment
     /**
      * Comment constructor.
      * @param string $content
-     * @param string $user
+     * @param User $user
      * @param \DateTime|string $created
      */
     public function __construct($content, $user, $created)
@@ -45,7 +45,7 @@ class Comment
     }
 
     /**
-     * @return string
+     * @return User
      */
     public function getUser()
     {
@@ -62,7 +62,8 @@ class Comment
 
     public function getFormatted()
     {
-        return $this->getUser() . " commented on " . $this->getCreated()->format('Y-m-d H:i:s') . "\n" .
+        return $this->getUser()->getGitHubMention() .
+            " commented on " . $this->getCreated()->format('Y-m-d H:i:s') . "\n" .
             $this->getContent();
     }
 }
