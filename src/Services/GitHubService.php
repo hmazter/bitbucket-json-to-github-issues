@@ -89,6 +89,23 @@ class GitHubService
         $this->post("issues/$issueId/comments", $data);
     }
 
+    public function listUsers()
+    {
+        $client = new Client();
+        $response = $client->get(
+            $this->getUrl('assignees'),
+            [
+                'auth' => $this->auth->getBasicHeaderArray(),
+                'headers' => [
+                    'Accept' => 'application/vnd.github.v3+json',
+                ]
+            ]
+        );
+
+        $this->rateLimitRemaining = (int)$response->getHeaderLine('X-RateLimit-Remaining');
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
     private function getUrl($endpoint)
     {
         return $this->baseUrl . "/repos/{$this->owner}/{$this->repo}/{$endpoint}";

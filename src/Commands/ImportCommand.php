@@ -43,7 +43,12 @@ class ImportCommand extends Command
             ->setName('import')
             ->setDescription('Import issues from BitBucket json to GitHub')
             ->addOption('filename', 'f', InputOption::VALUE_REQUIRED, 'Json file to import')
-            ->addOption('owner', 'o', InputOption::VALUE_REQUIRED, 'Owner of GitHub repository, organization or a person')
+            ->addOption(
+                'owner',
+                'o',
+                InputOption::VALUE_REQUIRED,
+                'Owner of GitHub repository, organization or a person'
+            )
             ->addOption('repo', 'r', InputOption::VALUE_REQUIRED, 'GitHub repository name')
             ->addOption('username', 'u', InputOption::VALUE_REQUIRED, 'GitHub username to log in with');
     }
@@ -58,21 +63,31 @@ class ImportCommand extends Command
         $importService = new ImportService($this->owner, $this->repo, $this->auth);
         $issues = $issueParser->parseJsonFileToIssues($this->filename);
 
+        $output->writeln('');
         $output->writeln('<info>Found ' . count($issueParser->getUsers()) . ' users in BitBucket</info>');
-        $output->writeln('<info>Match these BitBucket usernames to GitHub users, or leave empty to skip</info>');
+        $output->writeln(
+            '<info>Select GitHub user from the following list for each BitBucket user, or leave empty to skip</info>'
+        );
+
+        $githubUsers = $importService->listUsers();
+        $output->writeln('<info>Available GitHub users:</info>');
+        foreach ($githubUsers as $index => $githubUser) {
+            $output->writeln("{$index}) {$githubUser}");
+        }
 
         /** @var User $assignee */
         foreach ($issueParser->getUsers() as $assignee) {
-            $username = $helper->ask(
+            $userIndex = $helper->ask(
                 $input,
                 $output,
                 new Question('BitBucket user ' . $assignee->getBitbucket() . ': ')
             );
-            if ($username != null) {
-                $assignee->setGithub($username);
+            if ($userIndex != null) {
+                $assignee->setGithub($githubUsers[$userIndex]);
             }
         }
 
+        $output->writeln('');
         $output->writeln('<info>Parsed ' . count($issues) . ' from the json file</info>');
         $question = new ConfirmationQuestion("Continue to import these to {$this->owner}/{$this->repo}? (y/N)", false);
         if (!$helper->ask($input, $output, $question)) {

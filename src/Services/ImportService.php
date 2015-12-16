@@ -35,6 +35,16 @@ class ImportService
         $this->updateIssue($issueId, $issue);
     }
 
+    public function listUsers()
+    {
+        $return = [];
+        foreach($this->githubService->listUsers() as $user) {
+            $return[] = $user['login'];
+        }
+
+        return $return;
+    }
+
     private function createIssue(Issue $issue)
     {
         $response = $this->githubService->createIssue($issue);
